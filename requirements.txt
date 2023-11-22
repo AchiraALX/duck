@@ -1,7 +1,2 @@
-Flask
-Flask-Migrate
-Flask-SQLAlchemy
-flask_wtf
-psycopg2
-python-dotenv
-SQLAlchemy
+quart==0.19.4
+quart-auth==0.9.0
