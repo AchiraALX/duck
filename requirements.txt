@@ -1,2 +1,7 @@
-Flask==3.0.0
-gunicorn
+Flask
+Flask-Migrate
+Flask-SQLAlchemy
+flask_wtf
+psycopg2
+python-dotenv
+SQLAlchemy
