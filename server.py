@@ -3,7 +3,7 @@
 """Duck server config
 """
 
-from duck.duck import duck_app
+from api.v1.duck import duck_app
 
 if __name__ == "__main__":
     duck_app.run()
