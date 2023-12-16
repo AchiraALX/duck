@@ -6,16 +6,46 @@
 
 
 from . import duck_app
-from quart import jsonify, Response
+from quart import jsonify, Response, abort, request
 from typing import Tuple
+from workers import MakeErrorResponses
+from quart_auth import current_user, login_required, logout_user
+from jose import jwt
 
 
-@duck_app.route('/', methods=['GET'], strict_slashes=False)
-async def duck() -> str:
+@duck_app.route('/', methods=['POST'], strict_slashes=False)
+@login_required
+async def duck() -> Response:
     """Welcome to duck page
     """
 
-    return jsonify({'duck': 'Ok'})
+    user = jwt.decode(
+        current_user.auth_id, duck_app.secret_key, algorithms='HS256')
+
+    return jsonify(
+        {
+            'duck': 'Ok',
+            'authenticated': user
+        }
+    )
+
+
+@duck_app.get('/ping')
+async def pong():
+    """Confirms the api is still alive
+    """
+
+    return MakeErrorResponses(data="Pong").make_200()
+
+
+@duck_app.get('/unauthorized')
+@login_required
+async def unauthorized():
+    """Check for the 401 error
+    """
+
+    logout_user()
+    return abort(401)
 
 
 @duck_app.errorhandler(404)
@@ -23,15 +53,15 @@ async def duck_not_found(error) -> Tuple[Response, int]:
     """ 404 Page not found error handler
     """
 
-    return jsonify({'404 error': 'Snap! Its on you end, check URL'}), 404
+    return MakeErrorResponses(error).make_404(), 200
 
 
 @duck_app.errorhandler(500)
-async def duck_seerver_error(error) -> Tuple[Response, int]:
+async def duck_server_error(error) -> Tuple[Response, int]:
     """500 internal server error handler
     """
 
-    return jsonify()
+    return MakeErrorResponses(error).make_500(), 500
 
 
 @duck_app.errorhandler(403)
@@ -47,7 +77,7 @@ async def duck_unauthorized(error) -> Tuple[Response, int]:
     """401 unauthorized error handler
     """
 
-    return jsonify({'401 error': 'Unauthorized'}), 401
+    return MakeErrorResponses(error).make_401(), 200
 
 
 @duck_app.errorhandler(400)
@@ -56,3 +86,11 @@ async def duck_bad_request(error) -> Tuple[Response, int]:
     """
 
     return jsonify({'400 error': 'Bad request'}), 400
+
+
+@duck_app.errorhandler(405)
+async def method_not_allowed(error) -> Tuple[Response, int]:
+    """405 Method not allowed error handler
+    """
+
+    return jsonify({'405 error': "Method not allowed"}), 405
