@@ -30,6 +30,11 @@ async def duck() -> Response:
     )
 
 
+@duck_app.route('/', methods=['POST'], strict_slashes=False)
+async def index():
+    return await render_template('index.html')
+
+
 @duck_app.get('/ping')
 async def pong():
     """Confirms the api is still alive

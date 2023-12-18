@@ -8,7 +8,7 @@ from typing import Optional, List, Dict
 from quart import jsonify, Response
 from db.models.user import User
 from db import DBStorage
-from typing import List
+from typing import List, Union
 from .exc import DuckNoResultFound
 from sqlalchemy.ext.serializer import loads
 import json
@@ -103,7 +103,7 @@ class AddToDB:
     @staticmethod
     def _check_fields(
             data: Dict | None = None, chunks: List | None = None
-    ) -> List[str] | True:
+    ) -> Union[List[str], bool]:
         """Check fields of given data for the specified chunk
 
         Arguments:
