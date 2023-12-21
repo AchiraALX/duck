@@ -13,7 +13,7 @@ from workers.workers import Auth
 from typing import Dict
 import logging
 
-duck_app = Quart(__name__, template_folder="../../templates, static_folder='../../static'")
+duck_app = Quart(__name__, template_folder='../../templates', static_folder='../../static')
 duck_app.debug = True
 duck_app.secret_key = token_hex()
 

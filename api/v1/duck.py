@@ -11,6 +11,7 @@ from quart_auth import current_user, login_required, logout_user
 from jose import jwt
 import logging
 from quart import Quart, render_template
+from quart import send_from_directory
 
 
 @duck_app.route('/', methods=['POST'], strict_slashes=False)
@@ -34,6 +35,21 @@ async def duck() -> Response:
 @duck_app.route('/', methods=['GET'], strict_slashes=False)
 async def index():
     return await render_template('index.html')
+
+
+@duck_app.route('/login.html', methods=['GET'], strict_slashes=False)
+async def login():
+    return await render_template('login.html')
+
+
+@duck_app.route('/signup.html', methods=['GET'], strict_slashes=False)
+async def signup():
+    return await render_template('signup.html')
+
+
+@duck_app.route('/favicon.ico', methods=['GET'], strict_slashes=False)
+async def favicon():
+    return await send_from_directory('.', 'favicon.ico')
 
 
 @duck_app.get('/ping')
