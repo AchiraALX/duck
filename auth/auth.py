@@ -70,8 +70,8 @@ async def login() -> Response:
         })
 
     return jsonify({
-        'login': "Can't quit locate the username."
-    })
+        'login': "Invalid password"
+    }), 401
 
 
 @duck_auth.route('/sign-up', methods=['POST'], strict_slashes=False)

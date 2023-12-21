@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-
-
 """Welcome to the Duck
 """
 
@@ -11,6 +9,8 @@ from typing import Tuple
 from workers import MakeErrorResponses
 from quart_auth import current_user, login_required, logout_user
 from jose import jwt
+import logging
+from quart import Quart, render_template
 
 
 @duck_app.route('/', methods=['POST'], strict_slashes=False)
@@ -18,9 +18,10 @@ from jose import jwt
 async def duck() -> Response:
     """Welcome to duck page
     """
-
     user = jwt.decode(
         current_user.auth_id, duck_app.secret_key, algorithms='HS256')
+
+    logging.info(f'Successful login: {user["username"]}')
 
     return jsonify(
         {
@@ -30,7 +31,7 @@ async def duck() -> Response:
     )
 
 
-@duck_app.route('/', methods=['POST'], strict_slashes=False)
+@duck_app.route('/', methods=['GET'], strict_slashes=False)
 async def index():
     return await render_template('index.html')
 
@@ -39,6 +40,8 @@ async def index():
 async def pong():
     """Confirms the api is still alive
     """
+
+    logging.info('Ping request received.')
 
     return MakeErrorResponses(data="Pong").make_200()
 
@@ -57,6 +60,8 @@ async def unauthorized():
 async def duck_not_found(error) -> Tuple[Response, int]:
     """ 404 Page not found error handler
     """
+
+    logging.warning('404 Not Found error.')
 
     return MakeErrorResponses(error).make_404(), 200
 
@@ -82,7 +87,10 @@ async def duck_unauthorized(error) -> Tuple[Response, int]:
     """401 unauthorized error handler
     """
 
-    return MakeErrorResponses(error).make_401(), 200
+    return MakeErrorResponses({
+        'error': 'Unauthorized',
+        'message': 'You are not authorized to access this resource.'
+    }).make_401(), 401
 
 
 @duck_app.errorhandler(400)
