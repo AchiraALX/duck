@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='media/favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="../static/styles/w3/w3.css">
+    <link rel="stylesheet" href="../static/styles/duck.css">
+    <title>Duck</title>
+</head>
+<header class="w3-border-bottom w3-display-container w3-top">
+    <div class="w3-padding w3-display-left home w3-round-medium" style="cursor: pointer;">
+        <div class="home">
+            <div class="menu w3-round w3-button">&#9776;</div>
+        </div>
+    </div>
+
+    <div class="w3-margin-right w3-display-right" style="display: flex;flex-direction:row;align-items:center">
+        <div style="vertical-align: middle;" class="w3-small w3-margin-right w3-round">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('duck_auth.logout') }}" class="duck-link">Logout</a>
+            {% else %}
+            <a href=" {{ url_for('duck_auth.login') }} " class="duck-link">Login</a>
+            {% endif %}
+        </div>
+        <div class="w3-circle prof" style="vertical-align: middle;">
+            <img src="{{ url_for('static', filename='media/favicon.ico') }}" alt="Duck">
+        </div>
+    </div>
+</header>
+<main>
+
+    <body class="w3-container">
+        {% block body %}
+
+        {% endblock %}
+    </body>
+</main>
+
+<div class="footer-links">
+    <footer class=" w3-padding">
+        <div class="w3-small w3-row w3-center">
+            <div class="w3-col m6 w3-padding">&copy; Duck <span class="year"></span></div>
+            <div class="w3-col m6 w3-padding">
+                <!-- For Jacob -->
+                <a href="https://github.com/jacob" target="_blank" data-name="Jacob">
+                    <span>&times;</span> &nbsp; GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/jacob" target="_blank" data-name="Jacob">
+                    <span>&fallingdotseq;</span> &nbsp; LinkedIn
+                </a>
+                <a href="https://twitter.com/jacob" target="_blank" data-name="Jacob">
+                    <span>&target;</span> &nbsp; Twitter
+                </a>
+
+                <!-- For Alice -->
+                <a href="https://github.com/JEPTUI" target="_blank" data-name="Alice Kiptui">
+                    <span>&times;</span> &nbsp; GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/alice-kiptui96/" target="_blank" data-name="Alice Kiptui">
+                    <span>&fallingdotseq;</span> &nbsp; LinkedIn
+                </a>
+                <a href="https://twitter.com/AliceJeptui" target="_blank" data-name="Alice Kiptui">
+                    <span>&target;</span> &nbsp; Twitter
+                </a>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    const year = document.querySelectorAll('.year');
+
+    year.forEach((year) => { year.textContent = new Date().getFullYear() });
+</script>
+
+</html>

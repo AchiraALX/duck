@@ -9,58 +9,10 @@ const host = 'http://localhost:5000/'
 document.addEventListener('DOMContentLoaded', () => {
     const year = document.querySelectorAll('.year');
 
-    ping();
-
-    logged('jydtjyg');
-
     year.forEach((year) => { year.textContent = new Date().getFullYear() });
+    alert('New date what do you suggest?')
 })
 
-/**
- * Try to log a user in
- */
-const login = () => {
-    // Get the username and the password
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
-
-    /**
-     * Check for invalid input or if inputs are empty
-     * Invalid inputs:
-     * Has spaces or characters less than 4
-     */
-    if (username.trim() === '') {
-        alert('Empty field');
-        return
-    }
-    if (password.trim() === '') {
-        alert('Password empty');
-        return
-    }
-
-    // New forData object
-    const user = new FormData();
-
-    // parse data
-    user.append('username', username);
-    user.append('password', password);
-
-    fetch(host + 'login', {
-        method: 'POST',
-        body: user,
-        headers: {
-            'Duck-Auth': 'duck'
-        }
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            alert(JSON.stringify(data))
-            logged(data.token);
-        })
-        .catch((error) => ping());
-
-
-}
 
 /**
  * Try to sign-up the user

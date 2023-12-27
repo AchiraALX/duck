@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class="duck-form-container w3-card w3-round w3-padding-large" style="margin-top: 90px;">
+	<div class="w3-display-container w3-center w3-xlarge" style="font-weight: 900;">
+		Login
+	</div>
+
+	<br>
+
+	<div class="w3-padding-top-32">
+		<form action="{{ url_for('duck_auth.login') }}" method="post" id="login">
+
+			<div class="input">
+				<input type="text" placeholder="Username" class="w3-small w3-input" name="login-username"
+					id="login-username" autofocus>
+			</div>
+			<div class="input">
+				<input type="password" placeholder="Password" class="w3-small w3-input w3-margin-top"
+					name="login-password" id="login-password">
+			</div>
+
+			<br>
+
+			<div style="text-align: center;">
+				<button class="w3-button w3-margin-top w3-round" style="background-color: var(--eucalyptus);"
+					type="submit">Log
+					in</button>
+			</div>
+
+		</form>
+		<div class="w3-center w3-margin-top w3-small">
+			<button class="w3-button w3-margin-top w3-round" style="background-color: var(--vista-blue);">Sign Up
+				in</button>
+			<button class="w3-button w3-margin-top w3-margin-left w3-round w3-small"
+				style="background-color: var(--maverick);">Forgot
+				Password?</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	const verify = () => {
+		alert(document.getElementById('login-username').value)
+
+		if (confirm('About to submit')) {
+			document.getElementById('login').submit
+		}
+	}
+</script>
+
+{% endblock %}

@@ -3,28 +3,36 @@
 """Welcome to the main duck application
 """
 
-from auth.auth import duck_auth
-from messenger.messenger import duck_messenger
+#!/usr/bin/env python3
 
-from quart import Quart, render_template
+"""The duck
+"""
+
+
+from flask import redirect
+from quart import Quart, request, abort, url_for
 from secrets import token_hex
+from auth.auth import duck_auth
 from quart_cors import cors
 from quart_auth import QuartAuth, current_user
+from jose import jwt, ExpiredSignatureError, JWTError
 from workers.workers import Auth
-from jose import ExpiredSignatureError, JWTError
-
-
+from typing import Dict
+import logging
+from messenger.messenger import duck_messenger
 duck_app = Quart(__name__)
 duck_app.debug = True
 duck_app.secret_key = token_hex()
 
+logging.basicConfig(level=logging.INFO)
 
 QuartAuth(duck_app)
+
 cors(duck_app, allow_origin='*')
 auth = Auth()
-excluded_uris = [
+excluded_uri = [
     '/login',
-    '/sign_up',
+    '/sign-up',
     '/ping',
     '/logout'
 ]
@@ -35,7 +43,16 @@ duck_app.register_blueprint(duck_messenger, url_prefix='/dashboard')
 
 @duck_app.before_request
 async def authenticate():
-    """Authorize a request if given Duck-Auth value is valid
+    """Authorize a request
     """
+    try:
+        logging.info('Processing request...')
 
-    pass
+        if not auth.require_authorization(request.path, excluded_uri):
+
+            if current_user.auth_id is None:
+                return redirect(url_for('duck_auth.login'))
+
+    except Exception as e:
+        logging.exception(f'An error occurred: {str(e)}')
+        abort(500)

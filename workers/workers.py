@@ -18,10 +18,10 @@ storage = DBStorage()
 
 # Auth class declaration
 class Auth:
-    """Performa simple authentication on the requests
+    """Perform simple authentication on the requests
     """
     @staticmethod
-    def requre_authorization(
+    def require_authorization(
             uri: str | None = None,
             excluded_uris: List[str] | None = None) -> bool:
         """Check if a request needs to be authenticated
@@ -228,4 +228,3 @@ class DuckIntegrityError(Exception):
     """Creates an integrity exception
     """
     pass
-

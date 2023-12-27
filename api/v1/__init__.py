@@ -13,7 +13,8 @@ from workers.workers import Auth
 from typing import Dict
 import logging
 
-duck_app = Quart(__name__, template_folder='../../templates', static_folder='../../static')
+duck_app = Quart(__name__, template_folder='../../templates',
+                 static_folder='../../static')
 duck_app.debug = True
 duck_app.secret_key = token_hex()
 
@@ -40,7 +41,7 @@ async def authenticate():
     try:
         logging.info('Processing request...')
 
-        if not auth.requre_authorization(request.path, excluded_uri):
+        if not auth.require_authorization(request.path, excluded_uri):
 
             duck_token = None
             if request.headers.get('Duck-Authorization') is not None:
