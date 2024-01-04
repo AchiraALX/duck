@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="{{ url_for('static', filename='media/favicon.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" href="../static/styles/w3/w3.css">
-    <link rel="stylesheet" href="../static/styles/duck.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/duck.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/w3/w3.css') }}">
     <title>Duck</title>
 </head>
 <header class="w3-border-bottom w3-display-container w3-top">
@@ -19,9 +19,9 @@
     <div class="w3-margin-right w3-display-right" style="display: flex;flex-direction:row;align-items:center">
         <div style="vertical-align: middle;" class="w3-small w3-margin-right w3-round">
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('duck_auth.logout') }}" class="duck-link">Logout</a>
+            <a href="" class="duck-link">Logout</a>
             {% else %}
-            <a href=" {{ url_for('duck_auth.login') }} " class="duck-link">Login</a>
+            <a href="{{ url_for('duck_auth.login') }}" class="duck-link">Login</a>
             {% endif %}
         </div>
         <div class="w3-circle prof" style="vertical-align: middle;">

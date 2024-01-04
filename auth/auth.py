@@ -51,7 +51,7 @@ async def login() -> Any:
             user = loads(str(query.query_user(username)))
             if user['username'] == username:
                 if user['password'] == password:
-                    from api.v1 import duck_app
+                    from app.main import duck_app
                     token = jwt.encode(
                         user, duck_app.secret_key, algorithm='HS256')
                     login_user(
@@ -129,7 +129,7 @@ async def logout():
     """Log out a user
     """
 
-    from api.v1 import duck_app
+    from app.main import duck_app
 
     if current_user.auth_id is not None:
         user = jwt.decode(

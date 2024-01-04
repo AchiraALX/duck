@@ -10,7 +10,7 @@
 
 
 from flask import redirect
-from quart import Quart, request, abort, url_for
+from quart import Quart, render_template, request, abort, url_for
 from secrets import token_hex
 from auth.auth import duck_auth
 from quart_cors import cors
@@ -20,6 +20,8 @@ from workers.workers import Auth
 from typing import Dict
 import logging
 from messenger.messenger import duck_messenger
+
+
 duck_app = Quart(__name__)
 duck_app.debug = True
 duck_app.secret_key = token_hex()

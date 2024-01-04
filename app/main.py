@@ -4,7 +4,10 @@
 """The duck main module
 """
 
-from quart import render_template
+from quart import render_template, Response, jsonify
+from typing import Tuple
+
+from workers import MakeErrorResponses
 from . import duck_app
 
 
@@ -14,3 +17,38 @@ async def main_duck() -> str:
     """
 
     return await render_template('index.html')
+
+@duck_app.errorhandler(403)
+async def duck_forbidden(error) -> Tuple[Response, int]:
+    """403 forbidden error handler
+    """
+
+    return jsonify({'403 error': 'Forbidden'}), 403
+
+
+@duck_app.errorhandler(401)
+async def duck_unauthorized(error) -> Tuple[Response, int]:
+    """401 unauthorized error handler
+    """
+
+    return MakeErrorResponses({
+        'error': 'Unauthorized',
+        'message': 'You are not authorized to access this resource.'
+    }).make_401(), 401
+
+
+@duck_app.errorhandler(400)
+async def duck_bad_request(error) -> Tuple[Response, int]:
+    """400 bad request error handler
+    """
+
+    return jsonify({'400 error': 'Bad request'}), 400
+
+
+@duck_app.errorhandler(405)
+async def method_not_allowed(error) -> Tuple[Response, int]:
+    """405 Method not allowed error handler
+    """
+
+    return jsonify({'405 error': "Method not allowed"}), 405
+
