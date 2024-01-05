@@ -5,17 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{  url_for('static', filename='styles/duck.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/w3/w3.css') }}">
+    <link rel="stylesheet" href="{{  url_for('static', filename='styles/div.css') }}">
     <title>chat</title>
+
 </head>
 <body>
-    <div class="header">I am the header</div>
+    <div class="header" style="display: flex; flex-direction: row;">
+        <div style="vertical-align: middle">Achira</div>
+    </div>
 
     <div class="body">
-        I am the body
+        <div class="w3-container">
+            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
+                Bye!
+            </div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
+                Bye!
+            </div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
+                Bye!
+            </div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
+        </div>
+        <div class="w3-container">
+            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
+                Bye!
+            </div>
+        </div>
     </div>
 
     <div class="chat">
-        I am the chat
+        <input type="text" class="w3-input" placeholder="Type duck here...">
     </div>
+
+    <script></script>
 </body>
 </html>

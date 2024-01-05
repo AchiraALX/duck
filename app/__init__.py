@@ -25,6 +25,7 @@ from messenger.messenger import duck_messenger
 duck_app = Quart(__name__)
 duck_app.debug = True
 duck_app.secret_key = token_hex()
+duck_app.static_folder = 'static'
 
 logging.basicConfig(level=logging.INFO)
 

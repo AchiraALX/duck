@@ -19,7 +19,7 @@
     <div class="w3-margin-right w3-display-right" style="display: flex;flex-direction:row;align-items:center">
         <div style="vertical-align: middle;" class="w3-small w3-margin-right w3-round">
             {% if current_user.is_authenticated %}
-            <a href="" class="duck-link">Logout</a>
+            <a href="{{ url_for('main_duck') }}" class="duck-link">Logout me</a>
             {% else %}
             <a href="{{ url_for('duck_auth.login') }}" class="duck-link">Login</a>
             {% endif %}

@@ -9,18 +9,11 @@ body {
     background-color: #f1f1f1;
     padding: 20px;
     text-align: center;
+    display: flex;
+    flex-direction: row;
 }
 
 .body {
     flex: 1 0 auto;
     padding: 20px;
 }
-
-.chat {
-    border: 2px solid #dedede;
-    background-color: #f1f1f1;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px 0;
-}
-

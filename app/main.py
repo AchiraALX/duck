@@ -4,8 +4,8 @@
 """The duck main module
 """
 
-from quart import render_template, Response, jsonify
-from typing import Tuple
+from quart import redirect, render_template, Response, jsonify, url_for
+from typing import Literal, Tuple
 
 from workers import MakeErrorResponses
 from . import duck_app
@@ -52,3 +52,10 @@ async def method_not_allowed(error) -> Tuple[Response, int]:
 
     return jsonify({'405 error': "Method not allowed"}), 405
 
+
+
+@duck_app.errorhandler(404)
+async def page_not_found(error) -> Tuple[Response, Literal[404]]:
+    """404 page not found error handler
+    """
+    return redirect(url_for('main_duck')), 404
