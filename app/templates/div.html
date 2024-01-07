@@ -8,6 +8,29 @@
     <link rel="stylesheet" href="{{  url_for('static', filename='styles/div.css') }}">
     <title>chat</title>
 
+    <style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .header {
+        background-color: #f1f1f1;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .body {
+        flex: 1 0 auto;
+        padding: 20px;
+    }
+
+    </style>
+
 </head>
 <body>
     <div class="header" style="display: flex; flex-direction: row;">
@@ -50,9 +73,46 @@
     </div>
 
     <div class="chat">
-        <input type="text" class="w3-input" placeholder="Type duck here...">
+        <input type="text" class="w3-input" placeholder="Type duck here..." id="message">
     </div>
 
-    <script></script>
+    <script>
+        const sock = new WebSocket(`wss://${ location.host }/dashboard/ws`);
+        const message = document.getElementById('message');
+
+        sock.addEventListener('message', (event) => {
+            data = JSON.parse(event.data);
+            console.log(data);
+
+        })
+
+        sock.addEventListener('open', (event) => {
+            sock.send(JSON.stringify({
+                type: 'connect',
+                token: '{{ guest_token }}'
+            }));
+        })
+
+        sock.addEventListener('close', (event) => {
+            console.log('disconnected');
+        })
+
+        message.addEventListener('keyup', (event) => {
+            if (event.keyCode === 13) {
+                sendMessage(JSON.stringify({
+                    type: 'message',
+                    data: message.value,
+                    date: new Date().toISOString(),
+                    guest_token: '{{ guest_token }}',
+                    host_token: '{{ host_token }}'
+                }));
+                message.value = '';
+            }
+        })
+
+        const sendMessage = (message) => {
+            sock.send(message);
+        }
+    </script>
 </body>
 </html>

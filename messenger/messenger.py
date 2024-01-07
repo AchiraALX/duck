@@ -3,80 +3,77 @@
 """The duck messenger module
 """
 
+import asyncio
 from quart import render_template, websocket
 from quart_auth import login_required
 from . import duck_messenger
 
 import secrets
+from typing import Any, Dict
+from quart_auth import current_user
 
 
-connected_clients = set()
-
-client_tokens = {}
-
-async def sending(token: str, message: str, sender_token: str):
-    """Send a message to a specific user
-    """
-    
-    recipient = client_tokens.get(token, None)
-    if recipient:
-        await recipient.send(message)
-    else:
-        await client_tokens[sender_token].send('The recipient is not connected')
+connected_clients: Dict[str, Any] = {}
 
 
-async def receive(token: str):
-    """Receive a message from a specific user
-    """
-
-    return await client_tokens[token].receive()
-
-@duck_messenger.route('/', methods=['GET', 'POST'], strict_slashes=False) #type: ignore
+@duck_messenger.route(
+        '/',
+        methods=['GET', 'POST'], strict_slashes=False)  # type: ignore
 @login_required
 async def dashboard():
     """Render the dashboard
     """
-    return await render_template('dashboard.html')
 
-@duck_messenger.route('/chat', methods=['GET', 'POST'], strict_slashes=False) #type: ignore
+    host_token = current_user.auth_id
+
+    return await render_template('dashboard.html', host_token=host_token)
+
+
+@duck_messenger.route(
+        '/chat',
+        methods=['GET', 'POST'], strict_slashes=False)  # type: ignore
 async def chat():
     """Render the chatting window
     """
 
-    return await render_template('div.html')
+    guest_token = secrets.token_urlsafe(16)
+
+    return await render_template('div.html', guest_token=guest_token)
+
 
 # Create a websocket connection
-@duck_messenger.websocket('/ws') #type: ignore
+@duck_messenger.websocket('/ws')  # type: ignore
 async def ws():
     """Create a websocket connection
     """
-    
-    client_token = secrets.token_urlsafe(16)
 
-    connected_clients.add(websocket._get_current_object()) # type: ignore
-    client_tokens[client_token] = websocket._get_current_object() # type: ignore
+    client_connection = websocket._get_current_object()  # type: ignore
+    print(client_connection)
+
+    print(f'Connected clients: {connected_clients}')
 
     try:
         while True:
-            # Receive a JSON object from the client
-            data  = await websocket.receive_json()
+            # Receive and process the message
+            message = await websocket.receive_json()
+            print(f'Received: {message}')
 
-            # Extract information from the JSON object
-            recipient_token = data['recipient_token']
-            sender_token = data['sender_token']
-            message = data['message']
+            if message.get('type') == 'connect':
+                # Check if the client is already connected
+                if message.get('token') in connected_clients:
+                    continue
 
-            # Check if the recipient is connected
-            recipient = client_tokens.get(recipient_token, None)
-            if recipient:
+                # Add the client to the connected clients
+                connected_clients[message.get('token')] = client_connection
+                print(f'Connected clients: {connected_clients}')
+
+            if message.get('type') == 'message':
                 # Send the message to the recipient
-                await recipient.send(message)
-            else:
-                # Send the message to the sender
-                await client_tokens[sender_token].send('The recipient is not connected')
+                recipient = message.get('guest_token')
+                print(f'Sending to {recipient}')
+                if recipient in connected_clients:
+                    print('Sending message')
+                    await connected_clients[recipient].send_json(message)
 
-    finally:
-        # Remove the client from the connected clients set
-        connected_clients.remove(websocket._get_current_object()) # type: ignore
-        client_tokens.pop(client_token, None)
-
+    except asyncio.CancelledError:
+        print('Websocket closed')

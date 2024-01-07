@@ -4,7 +4,13 @@
 """
 
 from app.main import duck_app
-from jose import jwt
+from hypercorn.config import Config
+from hypercorn.asyncio import serve
+import asyncio
+
+# Use hypercorn to serve the app
 
 if __name__ == "__main__":
-    duck_app.run(port=5000)
+    config = Config()
+    config.bind = ["0.0.0.0:5000"]  # replace with your desired host and port
+    asyncio.run(serve(duck_app, config))

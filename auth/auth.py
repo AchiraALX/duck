@@ -5,20 +5,25 @@
 
 from typing import Any
 
-from flask import flash, redirect
 from . import duck_auth
-from quart import jsonify, Response, abort, make_response, render_template, request, url_for
+from quart import (
+    jsonify,
+    Response,
+    abort,
+    render_template,
+    request,
+    url_for,
+    redirect,
+    flash
+)
 from workers import MakeErrorResponses
 from workers.workers import Query, AddToDB, DuckIntegrityError
 from workers import DuckNoResultFound
 from quart_auth import (
-    login_user,
-    AuthUser,
-    current_user,
-    logout_user,
+    AuthUser, current_user, login_user, logout_user
 )
+
 from jose import jwt
-from db.models.user import User
 from json import loads
 
 query = Query()
@@ -58,17 +63,19 @@ async def login() -> Any:
                         AuthUser(token), remember=True
                     )
 
-                    return redirect(url_for('messenger.dashboard'))
+                    response = redirect(url_for('messenger.dashboard'))
+                    response.set_cookie('token', token)
+
+                    return response
                 else:
-                    return jsonify({
-                        'login': "Invalid password"
-                    })
+                    await flash("Invalid password", "error")
+                    return redirect(url_for('duck_auth.login'))
+
         except DuckNoResultFound:
             return redirect(url_for('duck_auth.login'))  # type: ignore
 
-        return jsonify({
-            'login': "Invalid password"
-        }), 401
+        await flash("Invalid username", "error")
+        return redirect(url_for('duck_auth.login'))
 
     return await render_template('login.html')
 
@@ -136,6 +143,8 @@ async def logout():
             current_user.auth_id, duck_app.secret_key, algorithms='HS256'
         ).get('username')
         logout_user()
+        setattr(current_user, 'is_authenticated', False)
+        setattr(current_user, 'auth_id', None)
 
         return MakeErrorResponses(
             data=f'Sad to see you go {user}! Bye.').make_200()

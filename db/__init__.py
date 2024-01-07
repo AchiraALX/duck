@@ -13,7 +13,6 @@ from sqlalchemy.orm import sessionmaker, Session
 from typing import Any
 from sqlalchemy.orm.exc import FlushError, NoResultFound
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.serializer import dumps
 
 
 # DBStorage class declaration

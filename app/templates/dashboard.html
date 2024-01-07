@@ -2,6 +2,50 @@
 
 {% block body %}
 <div style="margin-top: 90px;" class="w3-container">
-    I am the dashboard
+    <div>
+        <div>Notification bar</div>
+        <div class="w3-padding w3-round" style="background-color: blanchedalmond;">
+            <span>3</span> <span>new</span> &nbsp; <span>messages</span>
+        </div>
+
+        <div>
+            My token is  {{ host_token }}
+        </div>
+
+        <div id="chat-list">
+            <div>
+                <div>Name</div>
+                <div>Message</div>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<script>
+    const sock = new WebSocket(`wss://${ location.host }/dashboard/ws`);
+
+    sock.addEventListener('open', (event) => {
+        console.log('Connected to server');
+        sock.send(JSON.stringify({
+            type: 'connect',
+            token: '{{ host_token }}'
+        }));
+    })
+
+    sock.addEventListener('message', (event) => {
+        data = JSON.parse(event.data);
+        console.log(data);
+        if (data.type == 'message') {
+            const chatList = document.getElementById('chat-list');
+            const chat = document.createElement('div');
+            chat.innerHTML = `
+                <div>${ data.name }</div>
+                <div>${ data.message }</div>
+            `;
+            chatList.appendChild(chat);
+        }
+    })
+</script>
+
 {% endblock %}

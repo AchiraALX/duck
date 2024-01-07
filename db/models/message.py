@@ -19,12 +19,12 @@ class Message(Base):
         String(100),
         nullable=False
     )
-    admin_id: Mapped[str] = mapped_column(
+    host_id: Mapped[str] = mapped_column(
         String(100),
         nullable=False
     )
 
-    content: Mapped[str] = mapped_column(
+    data: Mapped[str] = mapped_column(
         String(100),
         nullable=False
     )
@@ -37,7 +37,7 @@ class Message(Base):
     def to_dict(self):
         return {
             'guest_id': self.guest_id,
-            'admin_id': self.admin_id,
-            'content': self.content,
+            'host_id': self.host_id,
+            'content': self.data,
             'datetime': self.datetime
         }

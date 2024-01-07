@@ -3,21 +3,13 @@
 """Welcome to the main duck application
 """
 
-#!/usr/bin/env python3
-
-"""The duck
-"""
-
-
 from flask import redirect
-from quart import Quart, render_template, request, abort, url_for
+from quart import Quart, request, abort, url_for
 from secrets import token_hex
 from auth.auth import duck_auth
 from quart_cors import cors
 from quart_auth import QuartAuth, current_user
-from jose import jwt, ExpiredSignatureError, JWTError
 from workers.workers import Auth
-from typing import Dict
 import logging
 from messenger.messenger import duck_messenger
 
@@ -37,7 +29,8 @@ excluded_uri = [
     '/login',
     '/sign-up',
     '/ping',
-    '/logout'
+    '/logout',
+    '/dashboard/chat',
 ]
 
 duck_app.register_blueprint(duck_auth)
