@@ -18,6 +18,7 @@ async def main_duck() -> str:
 
     return await render_template('index.html')
 
+
 @duck_app.errorhandler(403)
 async def duck_forbidden(error) -> Tuple[Response, int]:
     """403 forbidden error handler
@@ -51,7 +52,6 @@ async def method_not_allowed(error) -> Tuple[Response, int]:
     """
 
     return jsonify({'405 error': "Method not allowed"}), 405
-
 
 
 @duck_app.errorhandler(404)

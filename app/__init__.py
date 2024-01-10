@@ -3,8 +3,7 @@
 """Welcome to the main duck application
 """
 
-from flask import redirect
-from quart import Quart, request, abort, url_for
+from quart import Quart, request, abort, url_for, redirect
 from secrets import token_hex
 from auth.auth import duck_auth
 from quart_cors import cors

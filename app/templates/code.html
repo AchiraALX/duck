@@ -89,6 +89,7 @@
         sock.addEventListener('open', (event) => {
             sock.send(JSON.stringify({
                 type: 'connect',
+                client: 'guest',
                 token: '{{ guest_token }}'
             }));
         })
@@ -104,7 +105,7 @@
                     data: message.value,
                     date: new Date().toISOString(),
                     guest_token: '{{ guest_token }}',
-                    host_token: '{{ host_token }}'
+                    host_token: '{{ host_token }}',
                 }));
                 message.value = '';
             }

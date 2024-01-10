@@ -29,6 +29,7 @@
         console.log('Connected to server');
         sock.send(JSON.stringify({
             type: 'connect',
+            client: 'host',
             token: '{{ host_token }}'
         }));
     })
@@ -45,6 +46,10 @@
             `;
             chatList.appendChild(chat);
         }
+    })
+
+    sock.addEventListener('close', (event) => {
+        console.log("Client disconnected. Refresh")
     })
 </script>
 
