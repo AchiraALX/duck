@@ -44,7 +44,7 @@ async def chat(host_token: str):
     """
 
     try:
-        host = loads(query.query_user(f'{host_token}'))
+        host = loads(str(query.query_user(f'{host_token}')))
 
         if host is None:
             return await render_template('index.html')
@@ -52,7 +52,7 @@ async def chat(host_token: str):
         guest_token = secrets.token_urlsafe(16)
 
         return await render_template(
-            'chat.html', host=host_token, guest=guest_token)
+            'chat.html', host=str(host_token), guest=guest_token)
 
     except Exception:
         return await render_template('index.html')

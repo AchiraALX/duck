@@ -7,6 +7,7 @@ import json
 
 from .models import Base
 from .models.user import User
+from .models.message import Message
 from typing import Optional
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
@@ -82,11 +83,16 @@ class DBStorage:
                 ).first()
 
                 if result is None:
-                    result = self._duck().scalars(
-                        select(User).where(
-                            User.id == query
-                            )
-                    ).first()
+                    raise NoResultFound
+
+                return json.dumps(result.to_dict())
+
+            if model == 'message':
+                result = self._duck().scalars(
+                    select(Message).where(
+                        Message.id == query
+                        )
+                ).first()
 
                 if result is None:
                     raise NoResultFound
