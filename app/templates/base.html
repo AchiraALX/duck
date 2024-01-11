@@ -2254,11 +2254,9 @@ a {
     <body class="w3-container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <ul>
-                {% for message, category in messages %}
-                    <li class="{{ category }}">{{ message }}</li>
+                {% for message in messages %}
+                    <div style="color: #009688;">{{ message }}</div>
                 {% endfor %}
-            </ul>
         {% endif %}
         {% endwith %}
         {% block body %}

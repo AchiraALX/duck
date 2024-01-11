@@ -5,12 +5,19 @@
 
 import asyncio
 from quart import render_template, websocket
-from quart_auth import login_required
+from quart_auth import login_required, current_user
 from . import duck_messenger
+from workers.workers import Query
+from db.models.message import Message
+from db import DBStorage
 
 import secrets
 from typing import Any, Dict
+from json import loads
 
+
+query = Query()
+storage = DBStorage()
 
 host_clients: Dict[str, Any] = {}
 guest_clients: Dict[str, Any] = {}
@@ -24,21 +31,31 @@ async def dashboard():
     """Render the dashboard
     """
 
-    host_token = secrets.token_urlsafe(16)
+    host_token = loads(query.query_user(f'{current_user.auth_id}'))
 
-    return await render_template('dashboard.html', host_token=host_token)
+    return await render_template('dashboard.html', host_token=host_token['id'])
 
 
 @duck_messenger.route(
-        '/chat',
+        '/chat/<host_token>',
         methods=['GET', 'POST'], strict_slashes=False)  # type: ignore
-async def chat():
+async def chat(host_token: str):
     """Render the chatting window
     """
 
-    guest_token = secrets.token_urlsafe(16)
+    try:
+        host = loads(query.query_user(f'{host_token}'))
 
-    return await render_template('code.html', guest_token=guest_token)
+        if host is None:
+            return await render_template('index.html')
+
+        guest_token = secrets.token_urlsafe(16)
+
+        return await render_template(
+            'chat.html', host=host_token, guest=guest_token)
+
+    except Exception:
+        return await render_template('index.html')
 
 
 # Create a websocket connection
@@ -74,15 +91,22 @@ async def ws():
                 host_token = message.get('host_token')
                 guest_token = message.get('guest_token')
 
+                # Save the message to the database
+                message = Message(
+                    host_token=host_token,
+                    guest_token=guest_token,
+                    message=message.get('message')
+                )
+
+                storage.add_duck(message)
+
                 # Send message to both connections
                 print(f'Sending to {host_token} and {guest_token}')
-                if host_token in host_clients and guest_token in guest_clients:
-                    print('Sending message')
-                    await send(
-                        host_token=host_token,
-                        guest_token=guest_token,
-                        message=message
-                    )
+                if host_token in host_clients:
+                    await host_clients[host_token].send_json(message)
+
+                if guest_token in guest_clients:
+                    await guest_clients[guest_token].send_json(message)
 
     except asyncio.CancelledError:
         print('Websocket closed')

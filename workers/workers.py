@@ -2,16 +2,11 @@
 
 """Workers module
 """
-import json
-import pickle
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Union
 from quart import jsonify, Response
 from db.models.user import User
 from db import DBStorage
-from typing import List, Union
 from .exc import DuckNoResultFound
-from sqlalchemy.ext.serializer import loads
-import json
 
 storage = DBStorage()
 
@@ -203,23 +198,6 @@ class MakeErrorResponses:
 
         if self.data is not None:
             res['data'] = self.data
-
-        return jsonify(res)
-
-    def make_401(self):
-        """Make unauthorized responses
-        """
-
-        res = {
-            'status_code': 401,
-            'status': 'Unauthorized',
-            'duck': 'Nah! Let us do some checks. Can you verify yourself',
-            'reaction': 'defensive',
-            'redirect': 'login'
-        }
-
-        if self.error is not None:
-            res['error'] = str(self.error)
 
         return jsonify(res)
 

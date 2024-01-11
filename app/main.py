@@ -7,7 +7,6 @@
 from quart import redirect, render_template, Response, jsonify, url_for
 from typing import Literal, Tuple
 
-from workers import MakeErrorResponses
 from . import duck_app
 
 
@@ -32,10 +31,7 @@ async def duck_unauthorized(error) -> Tuple[Response, int]:
     """401 unauthorized error handler
     """
 
-    return MakeErrorResponses({
-        'error': 'Unauthorized',
-        'message': 'You are not authorized to access this resource.'
-    }).make_401(), 401
+    return redirect(url_for('duck_auth.login')), 401
 
 
 @duck_app.errorhandler(400)

@@ -5,7 +5,7 @@
 """
 
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, Date, String
+from sqlalchemy import String
 from . import Base
 
 
@@ -33,10 +33,8 @@ class User(Base):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'username': self.username,
             'email': self.email,
             'password': self.password,
         }
-
-
-

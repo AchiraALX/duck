@@ -76,8 +76,17 @@ class DBStorage:
         try:
             if model == 'user':
                 result = self._duck().scalars(
-                    select(User).where(User.username == query)
+                    select(User).where(
+                        User.username == query
+                        )
                 ).first()
+
+                if result is None:
+                    result = self._duck().scalars(
+                        select(User).where(
+                            User.id == query
+                            )
+                    ).first()
 
                 if result is None:
                     raise NoResultFound

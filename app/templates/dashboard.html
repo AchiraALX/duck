@@ -3,7 +3,6 @@
 {% block body %}
 <div style="margin-top: 90px;" class="w3-container">
     <div>
-        <div>Notification bar</div>
         <div class="w3-padding w3-round" style="background-color: blanchedalmond;">
             <span>3</span> <span>new</span> &nbsp; <span>messages</span>
         </div>
@@ -13,7 +12,7 @@
         </div>
 
         <div id="chat-list">
-            <div>
+            <div class="message-container">
                 <div>Name</div>
                 <div>Message</div>
             </div>
@@ -23,7 +22,7 @@
 </div>
 
 <script>
-    const sock = new WebSocket(`wss://${ location.host }/dashboard/ws`);
+    const sock = new WebSocket(`ws://${ location.host }/dashboard/ws`);
 
     sock.addEventListener('open', (event) => {
         console.log('Connected to server');

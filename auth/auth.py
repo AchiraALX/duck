@@ -56,17 +56,9 @@ async def login() -> Any:
             user = loads(str(query.query_user(username)))
             if user['username'] == username:
                 if user['password'] == password:
-                    from app.main import duck_app
-                    token = jwt.encode(
-                        user, duck_app.secret_key, algorithm='HS256')
-                    login_user(
-                        AuthUser(token), remember=True
-                    )
+                    login_user(AuthUser(user['username']))
 
-                    response = redirect(url_for('messenger.dashboard'))
-                    response.set_cookie('token', token)
-
-                    return response
+                    return redirect(url_for('messenger.dashboard'))
                 else:
                     await flash("Invalid password", "error")
                     return redirect(url_for('duck_auth.login'))
@@ -102,15 +94,26 @@ async def sign_up() -> Response | str:
 
         # Give response according to inf received
         if username is None:
-            return jsonify({'sign-up': "Username must be provided"})
+            await flash("Username must be provided", "error")
+            return redirect(url_for('duck_auth.sign_up'))
+
         if email is None:
-            return jsonify({'sign-up': "Email must be provided"})
+            await flash("Email must be provided", "error")
+            return redirect(url_for('duck_auth.sign_up'))
+
         if password is None:
-            return jsonify({'sign-up': "Password must be provided."})
+            await flash("Password must be provided", "error")
+            return redirect(url_for('duck_auth.sign_up'))
+
         if confirm_password is None:
-            return jsonify({'sign-up': "You must confirm you password"})
+            await flash("Confirm password must be provided", "error")
+            return redirect(url_for('duck_auth.sign_up'))
+
         if password != confirm_password:
-            return jsonify({'sign-up': "Password don't match."})
+            await flash("Passwords do not match", "error")
+            return redirect(url_for('duck_auth.sign_up'))
+
+        print(f'Username: {username}')
 
         try:
             add_status = add.add_user({

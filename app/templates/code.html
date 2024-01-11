@@ -37,39 +37,8 @@
         <div style="vertical-align: middle">Achira</div>
     </div>
 
-    <div class="body">
-        <div class="w3-container">
-            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
-        </div>
-        <div class="w3-container">
-            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
-                Bye!
-            </div>
-        </div>
-        <div class="w3-container">
-            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
-        </div>
-        <div class="w3-container">
-            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
-                Bye!
-            </div>
-        </div>
-        <div class="w3-container">
-            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
-        </div>
-        <div class="w3-container">
-            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
-                Bye!
-            </div>
-        </div>
-        <div class="w3-container">
-            <div class="w3-right w3-padding w3-round" style="background-color: brown;">Hello</div>
-        </div>
-        <div class="w3-container">
-            <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">
-                Bye!
-            </div>
-        </div>
+    <div class="body" id="chat-cont">
+        <div class="w3-center">Start of the chat</div>
     </div>
 
     <div class="chat">
@@ -77,12 +46,31 @@
     </div>
 
     <script>
-        const sock = new WebSocket(`wss://${ location.host }/dashboard/ws`);
+        const sock = new WebSocket(`ws://${ location.host }/dashboard/ws`);
         const message = document.getElementById('message');
+        const chatCont = document.getElementById('chat-cont');
 
         sock.addEventListener('message', (event) => {
             data = JSON.parse(event.data);
-            console.log(data);
+            const cont = document.createElement('div');
+            
+            if (data.from == 'guest') {
+                cont.innerHTML = `
+                    <div class="w3-container">
+                        <div class="w3-right w3-padding w3-round" style="background-color: brown;">${ data.data }</div>
+                    </div>
+                `;
+            } else {
+                cont.innerHTML = `
+                    <div class="w3-container">
+                        <div class="w3-left w3-padding w3-round" style="background-color: blanchedalmond;">${ data.data }</div>
+                    </div>
+                `;
+            }
+
+            cont.padding = '3px';
+
+            chatCont.appendChild(cont);
 
         })
 
@@ -106,6 +94,7 @@
                     date: new Date().toISOString(),
                     guest_token: '{{ guest_token }}',
                     host_token: '{{ host_token }}',
+                    from: 'guest'
                 }));
                 message.value = '';
             }

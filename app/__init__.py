@@ -3,11 +3,11 @@
 """Welcome to the main duck application
 """
 
-from quart import Quart, request, abort, url_for, redirect
+from quart import Quart
 from secrets import token_hex
 from auth.auth import duck_auth
 from quart_cors import cors
-from quart_auth import QuartAuth, current_user
+from quart_auth import QuartAuth
 from workers.workers import Auth
 import logging
 from messenger.messenger import duck_messenger
@@ -36,12 +36,15 @@ duck_app.register_blueprint(duck_auth)
 duck_app.register_blueprint(duck_messenger, url_prefix='/dashboard')
 
 
-@duck_app.before_request
+'''@duck_app.before_request
 async def authenticate():
     """Authorize a request
     """
     try:
         logging.info('Processing request...')
+
+        if request.path == '/':
+            return await render_template('index.html')
 
         if not auth.require_authorization(request.path, excluded_uri):
 
@@ -51,3 +54,4 @@ async def authenticate():
     except Exception as e:
         logging.exception(f'An error occurred: {str(e)}')
         abort(500)
+'''
