@@ -4,7 +4,8 @@
 """
 
 from typing import Any
-
+# from itsdangerous import URLSafeTimedSerializer
+# from flask_mail import Mail, Message
 from . import duck_auth
 from quart import (
     jsonify,
@@ -25,9 +26,18 @@ from quart_auth import (
 
 from jose import jwt
 from json import loads
+from app import duck_app
+
 
 query = Query()
 add = AddToDB()
+# mail = Mail()
+# serializer = URLSafeTimedSerializer('secret_key')
+# mail.init_app(duck_app)
+
+
+def init_auth_module():
+    pass
 
 
 @duck_auth.route('/login', methods=['POST', 'GET'], strict_slashes=False)
@@ -93,27 +103,22 @@ async def sign_up() -> Response | str:
             request.args.get('confirm-password')
 
         # Give response according to inf received
-        if username is None:
-            await flash("Username must be provided", "error")
-            return redirect(url_for('duck_auth.sign_up'))
-
-        if email is None:
-            await flash("Email must be provided", "error")
-            return redirect(url_for('duck_auth.sign_up'))
-
-        if password is None:
-            await flash("Password must be provided", "error")
-            return redirect(url_for('duck_auth.sign_up'))
-
-        if confirm_password is None:
-            await flash("Confirm password must be provided", "error")
+        if username is None or email is None or password is None or confirm_password is None:
+            await flash("All fields must be provided", "error")
             return redirect(url_for('duck_auth.sign_up'))
 
         if password != confirm_password:
             await flash("Passwords do not match", "error")
             return redirect(url_for('duck_auth.sign_up'))
 
-        print(f'Username: {username}')
+        # Generate an activation token
+        '''activation_token = serializer.dumps(email, salt='activation')
+
+        # Send activation email
+        activation_link = url_for('duck_auth.activate', token=activation_token, _external=True)
+        message = f"Click the following link to activate your account: {activation_link}"
+        message = Message(subject='Activate Your Account', recipients=[email], body=message_body)
+        mail.send(message)'''
 
         try:
             add_status = add.add_user({
@@ -123,15 +128,29 @@ async def sign_up() -> Response | str:
             })
 
             if add_status is None:
-                return jsonify({'sign-up': f"Error occurred while adding"
-                                f" {username}"
-                                f" to database"})
+                return jsonify({'sign-up': f"Error occurred while adding {username} to database"})
 
         except DuckIntegrityError:
             return jsonify({'sign-up': f"{username} already exists"})
-        return jsonify({'sign-up': f"Signed up {username}"})
+        
+        # Redirect to login page upon successful signup
+        flash_message = f"Signed up {username}. Please log in."
+        await flash(flash_message, "success")
+        return redirect(url_for('duck_auth.login'))
 
     return await render_template('signup.html')
+
+
+'''@duck_auth.route('/activate/<token>')
+async def activate(token):
+    try:
+        email = serializer.loads(token, salt='activation', max_age=3600)  # Token valid for 1 hour
+        # Activate the user (update database, set user as activated, etc.)
+        flash('Account activated successfully. You can now log in.', 'success')
+        return redirect(url_for('duck_auth.login'))
+    except:
+        flash('Invalid or expired activation link.', 'error')
+        return redirect(url_for('duck_auth.login'))'''
 
 
 @duck_auth.get('/logout')

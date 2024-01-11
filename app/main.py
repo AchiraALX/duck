@@ -7,7 +7,11 @@
 from quart import redirect, render_template, Response, jsonify, url_for
 from typing import Literal, Tuple
 
-from . import duck_app
+from app import duck_app
+
+
+def init_main_module():
+    pass
 
 
 @duck_app.get('/')

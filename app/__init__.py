@@ -4,6 +4,9 @@
 """
 
 from quart import Quart
+
+duck_app = Quart(__name__)
+
 from secrets import token_hex
 from auth.auth import duck_auth
 from quart_cors import cors
@@ -11,12 +14,12 @@ from quart_auth import QuartAuth
 from workers.workers import Auth
 import logging
 from messenger.messenger import duck_messenger
+from app.main import init_main_module
 
-
-duck_app = Quart(__name__)
 duck_app.debug = True
-duck_app.secret_key = token_hex()
+duck_app.secret_key = token_hex(16)
 duck_app.static_folder = 'static'
+init_main_module()
 
 logging.basicConfig(level=logging.INFO)
 

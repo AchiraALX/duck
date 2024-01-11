@@ -3,10 +3,16 @@
 """Duck server config
 """
 
-from app.main import duck_app
+from app import duck_app
+from app.main import init_main_module
+from auth.auth import duck_auth, init_auth_module
 from hypercorn.config import Config
 from hypercorn.asyncio import serve
 import asyncio
+
+
+init_main_module()
+init_auth_module()
 
 # Use hypercorn to serve the app
 
