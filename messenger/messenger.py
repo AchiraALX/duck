@@ -10,10 +10,10 @@ from . import duck_messenger
 
 import secrets
 from typing import Any, Dict
-from quart_auth import current_user
 
 
-connected_clients: Dict[str, Any] = {}
+host_clients: Dict[str, Any] = {}
+guest_clients: Dict[str, Any] = {}
 
 
 @duck_messenger.route(
@@ -24,7 +24,7 @@ async def dashboard():
     """Render the dashboard
     """
 
-    host_token = current_user.auth_id
+    host_token = secrets.token_urlsafe(16)
 
     return await render_template('dashboard.html', host_token=host_token)
 
@@ -38,7 +38,7 @@ async def chat():
 
     guest_token = secrets.token_urlsafe(16)
 
-    return await render_template('div.html', guest_token=guest_token)
+    return await render_template('code.html', guest_token=guest_token)
 
 
 # Create a websocket connection
@@ -50,7 +50,8 @@ async def ws():
     client_connection = websocket._get_current_object()  # type: ignore
     print(client_connection)
 
-    print(f'Connected clients: {connected_clients}')
+    print(f'Connected host clients: {host_clients}')
+    print(f'Connnected guest_clients: {guest_clients}')
 
     try:
         while True:
@@ -59,21 +60,37 @@ async def ws():
             print(f'Received: {message}')
 
             if message.get('type') == 'connect':
-                # Check if the client is already connected
-                if message.get('token') in connected_clients:
-                    continue
+                client = message.get('client')
 
-                # Add the client to the connected clients
-                connected_clients[message.get('token')] = client_connection
-                print(f'Connected clients: {connected_clients}')
+                if client == 'host':
+                    host_clients[message.get('token')] = client_connection
+                    print(f'Connected clients: {host_clients}')
+
+                if client == 'guest':
+                    guest_clients[message.get('token')] = client_connection
+                    print(f'Connected guest clients: {guest_clients}')
 
             if message.get('type') == 'message':
-                # Send the message to the recipient
-                recipient = message.get('guest_token')
-                print(f'Sending to {recipient}')
-                if recipient in connected_clients:
+                host_token = message.get('host_token')
+                guest_token = message.get('guest_token')
+
+                # Send message to both connections
+                print(f'Sending to {host_token} and {guest_token}')
+                if host_token in host_clients and guest_token in guest_clients:
                     print('Sending message')
-                    await connected_clients[recipient].send_json(message)
+                    await send(
+                        host_token=host_token,
+                        guest_token=guest_token,
+                        message=message
+                    )
 
     except asyncio.CancelledError:
         print('Websocket closed')
+
+
+async def send(host_token, guest_token, message) -> None:
+    """Sending the message to both connections
+    """
+
+    host_clients[host_token].send_json(message)
+    guest_clients[guest_token].send_json(message)
