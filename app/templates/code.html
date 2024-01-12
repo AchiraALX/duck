@@ -54,7 +54,7 @@
             data = JSON.parse(event.data);
             const cont = document.createElement('div');
             
-            if (data.from == 'guest') {
+            if (data.sent_from == 'guest') {
                 cont.innerHTML = `
                     <div class="w3-container">
                         <div class="w3-right w3-padding w3-round" style="background-color: brown;">${ data.data }</div>
@@ -92,9 +92,9 @@
                     type: 'message',
                     data: message.value,
                     date: new Date().toISOString(),
-                    guest_token: '{{ guest_token }}',
-                    host_token: '{{ host_token }}',
-                    from: 'guest'
+                    guest_id: '{{ guest_token }}',
+                    host_id: '{{ host_token }}',
+                    sent_from: 'guest'
                 }));
                 message.value = '';
             }

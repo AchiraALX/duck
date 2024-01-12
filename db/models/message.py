@@ -3,10 +3,10 @@
 """This is a message model module.
 """
 
-from . import Base
+from datetime import datetime
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
+from . import Base
 
 
 class Message(Base):
@@ -28,16 +28,23 @@ class Message(Base):
         String(100),
         nullable=False
     )
-    datetime: Mapped[str] = mapped_column(
+    date: Mapped[str] = mapped_column(
         String(100),
         default=datetime.now(),
         nullable=False
     )
+    sent_from: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False
+    )
 
     def to_dict(self):
+        """Return the object as a dictionary
+        """
         return {
             'guest_id': self.guest_id,
             'host_id': self.host_id,
             'content': self.data,
-            'datetime': self.datetime
+            'datetime': self.date,
+            'sent_from': self.sent_from
         }

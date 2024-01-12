@@ -32,11 +32,14 @@
                     name="sign-up-c-password" id="sign-up-c-password">
             </div>
             
-            <button class="w3-button w3-margin-top w3-round" style="background-color: var(--eucalyptus);"
-            onclick="joinDuck()">Join
-            Duck</button>
+            <div class="w3-center w3-small">
+                <button class="w3-button w3-margin-top w3-round" style="background-color: var(--eucalyptus);"
+            type="submit">Join duck <i class="bi bi-arrow-right"></i> </button>
+            </div>
         </form>
             <div class="w3-center w3-margin-top w3-small">
+                <a class="w3-button w3-margin-top w3-round" style="background-color: var(--vista-blue); color: black;" href="{{ url_for('duck_auth.login') }}">Login
+                </a>
             <button class="w3-button w3-margin-top w3-margin-left w3-round w3-small"
                 style="background-color: var(--maverick);">Forgot
                 Password?</button>

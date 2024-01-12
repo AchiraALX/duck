@@ -2,8 +2,9 @@
 
 """Workers module
 """
-from typing import Optional, List, Dict, Union
+from typing import Optional, List, Dict, Union, Generator
 from quart import jsonify, Response
+
 from db.models.user import User
 from db import DBStorage
 from .exc import DuckNoResultFound
@@ -61,7 +62,25 @@ class Query:
             return user
 
         except DuckNoResultFound:
-            raise DuckNoResultFound
+            raise DuckNoResultFound from DuckNoResultFound
+
+    @staticmethod
+    def query_messages(host_id: str | None = None) -> Generator:
+        """Queries messages from a database
+        """
+
+        if host_id is None:
+            return "host_id has to be provided"
+
+        try:
+            messages = storage.query_duckling('message', host_id)
+            if messages is None:
+                raise DuckNoResultFound
+
+            return messages
+
+        except DuckNoResultFound:
+            raise DuckNoResultFound from DuckNoResultFound
 
 
 class AddToDB:
@@ -92,7 +111,7 @@ class AddToDB:
                     return user
 
             except DuckIntegrityError:
-                raise DuckIntegrityError
+                raise DuckIntegrityError from DuckIntegrityError
         return None
 
     @staticmethod
@@ -205,4 +224,3 @@ class MakeErrorResponses:
 class DuckIntegrityError(Exception):
     """Creates an integrity exception
     """
-    pass

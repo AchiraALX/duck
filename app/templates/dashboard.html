@@ -2,21 +2,25 @@
 
 {% block body %}
 <div style="margin-top: 90px;" class="w3-container">
-    <div>
-        <div class="w3-padding w3-round" style="background-color: blanchedalmond;">
-            <span>3</span> <span>new</span> &nbsp; <span>messages</span>
-        </div>
+    <div id="chat-list">
+       {% if messages %}
+       {% for message in messages %}
+         <div class="w3-panel w3-round w3-padding w3-margin-top chat" style="background-color: var(--eucalyptus);">
+              <div class="w3-border-bottom" data-guest="{{ message.guest_id }}">
+                Guest ID: <span id="guest">{{ message.guest_id }}</span>
+              </div>
+                <div class="w3-margin-top">
+                    {{ message.content }}
+                </div>
 
-        <div>
-            My token is  {{ host_token }}
-        </div>
-
-        <div id="chat-list">
-            <div class="message-container">
-                <div>Name</div>
-                <div>Message</div>
             </div>
-        </div>
+         {% endfor %}
+
+         {% else %}
+         <div class="w3-center">
+                <h2>No messages yet</h2>
+         </div>
+       {% endif %}
 
     </div>
 </div>
@@ -40,8 +44,16 @@
             const chatList = document.getElementById('chat-list');
             const chat = document.createElement('div');
             chat.innerHTML = `
-                <div>${ data.name }</div>
-                <div>${ data.message }</div>
+            <div class="w3-panel w3-round w3-padding w3-margin-top chat" style="background-color: var(--eucalyptus);">
+              <div class="w3-border-bottom" data-guest=" ${data.guest_id} ">
+                Guest ID: <span id="guest">${ data.guest_id }</span>
+              </div>
+                <div class="w3-margin-top">
+                    ${ data.data }
+                </div>
+                
+
+            </div>
             `;
             chatList.appendChild(chat);
         }
@@ -50,6 +62,29 @@
     sock.addEventListener('close', (event) => {
         console.log("Client disconnected. Refresh")
     })
+
+    const sendMessage = (message) => {
+        sock.send(message);
+    }
+
+    const chats = document.querySelectorAll('.chat');
+    chats.forEach((chat) => {
+        chat.addEventListener('click', (event) => {
+            const guestId = chat.querySelector('#guest').innerText;
+            const message = prompt('Type duck here ...')
+
+            sendMessage(JSON.stringify({
+                    type: 'message',
+                    data: message,
+                    date: new Date().toISOString(),
+                    guest_id: guestId,
+                    host_id: '{{ current_user.auth_id }}',
+                    sent_from: 'host'
+                }))
+
+        })
+    })
+    
 </script>
 
 {% endblock %}

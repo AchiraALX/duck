@@ -2269,28 +2269,8 @@ a {
     <footer class=" w3-padding">
         <div class="w3-small w3-row w3-center">
             <div class="w3-col m6 w3-padding">&copy; Duck <span class="year"></span></div>
-            <div class="w3-col m6 w3-paddin w3-light">
-                <!-- For Jacob -->
-                <a href="https://github.com/jacob" target="_blank" data-name="Jacob">
-                    <span>&times;</span> &nbsp; GitHub
-                </a>
-                <a href="https://www.linkedin.com/in/jacob" target="_blank" data-name="Jacob">
-                    <span>&fallingdotseq;</span> &nbsp; LinkedIn
-                </a>
-                <a href="https://twitter.com/jacob" target="_blank" data-name="Jacob">
-                    <span><i class="bi bi-twitter-x"></i></span> &nbsp; Twitter
-                </a>
-
-                <!-- For Alice -->
-                <a href="https://github.com/JEPTUI" target="_blank" data-name="Alice Kiptui">
-                    <span>&times;</span> &nbsp; GitHub
-                </a>
-                <a href="https://www.linkedin.com/in/alice-kiptui96/" target="_blank" data-name="Alice Kiptui">
-                    <span>&fallingdotseq;</span> &nbsp; LinkedIn
-                </a>
-                <a href="https://twitter.com/AliceJeptui" target="_blank" data-name="Alice Kiptui">
-                    <span><i class="bi bi-twitter-x"></i></span> &nbsp; Twitter
-                </a>
+            <div class="w3-col m6 w3-padding">
+                <i class="bi bi-patch-question-fill"></i> Help
             </div>
         </div>
     </footer>
@@ -2300,6 +2280,12 @@ a {
     const year = document.querySelectorAll('.year');
 
     year.forEach((year) => { year.textContent = new Date().getFullYear() });
+
+    const home = document.querySelector('.home');
+
+    home.addEventListener('click', () => {
+        window.location.href = "{{ url_for('main_duck') }}";
+    });
 </script>
 
 </html>

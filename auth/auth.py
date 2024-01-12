@@ -3,9 +3,9 @@
 """Welcome to authentication
 """
 
+from json import loads
 from typing import Any
 
-from . import duck_auth
 from quart import (
     Response,
     abort,
@@ -15,13 +15,13 @@ from quart import (
     redirect,
     flash
 )
-from workers.workers import Query, AddToDB, DuckIntegrityError
-from workers import DuckNoResultFound
 from quart_auth import (
     AuthUser, current_user, login_user, logout_user
 )
+from workers.workers import Query, AddToDB, DuckIntegrityError
+from workers import DuckNoResultFound
 
-from json import loads
+from . import duck_auth
 
 query = Query()
 add = AddToDB()
@@ -33,13 +33,8 @@ async def login() -> Any:
     """
 
     if request.method == 'POST':
-        username = (await request.form).get('login-username') if \
-            request.args.get('username') is None else \
-            request.args.get('username')
-
-        password = (await request.form).get('login-password') if \
-            request.args.get('password') is None else \
-            request.args.get('password')
+        username = (await request.form).get('login-username')
+        password = (await request.form).get('login-password')
 
         if username is None:
             print(username)
@@ -75,19 +70,20 @@ async def sign_up():
     """
 
     if request.method == 'POST':
+        print("Hello there some dude")
         # Collect user info
-        username = (await request.form).get('username') if \
-            request.args.get('username') is None else \
-            request.args.get('username')
-        email = (await request.form).get('email') if \
-            request.args.get('email') is None else \
-            request.args.get('email')
-        password = (await request.form).get('password') if \
-            request.args.get('password') is None else \
-            request.args.get('password')
-        confirm_password = (await request.form).get('confirm-password') if \
-            request.args.get('confirm-password') is None else \
-            request.args.get('confirm-password')
+        username = (await request.form).get('sign-up-username')
+        email = (await request.form).get('sign-up-email')
+        password = (await request.form).get('sign-up-password')
+        confirm_password = (await request.form).get('sign-up-c-password')
+
+        user = {
+            'username': username,
+            'email': email,
+            'password': password
+        }
+
+        print(user)
 
         # Give response according to inf received
         if username is None:

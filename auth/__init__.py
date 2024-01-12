@@ -3,7 +3,6 @@
 """Welcome to the authentication module
 """
 
-from quart import Blueprint, render_template
-
+from quart import Blueprint
 
 duck_auth = Blueprint('duck_auth', __name__)

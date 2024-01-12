@@ -4,16 +4,17 @@
 """
 
 import asyncio
-from quart import render_template, websocket
-from quart_auth import login_required, current_user
-from . import duck_messenger
-from workers.workers import Query
-from db.models.message import Message
-from db import DBStorage
-
+from json import loads
 import secrets
 from typing import Any, Dict
-from json import loads
+from quart import render_template, websocket
+from quart_auth import login_required, current_user
+
+from workers.workers import Query
+from workers.exc import DuckNoResultFound
+from db.models.message import Message
+from db import DBStorage
+from . import duck_messenger
 
 
 query = Query()
@@ -32,8 +33,16 @@ async def dashboard():
     """
 
     host_token = loads(query.query_user(f'{current_user.auth_id}'))
+    messages = query.query_messages(host_token['username'])
 
-    return await render_template('dashboard.html', host_token=host_token['id'])
+    print(messages)
+    print(host_token)
+
+    return await render_template(
+        'dashboard.html',
+        host_token=host_token['username'],
+        messages=messages
+    )
 
 
 @duck_messenger.route(
@@ -43,19 +52,25 @@ async def chat(host_token: str):
     """Render the chatting window
     """
 
+    guest_token = secrets.token_hex(16)
+
+    print(f'Host token: {host_token.strip()}')
+    print(f'Guest token: {guest_token}')
+
     try:
-        host = loads(str(query.query_user(f'{host_token}')))
-
-        if host is None:
-            return await render_template('index.html')
-
-        guest_token = secrets.token_urlsafe(16)
+        host = loads(str(query.query_user(host_token.strip())))
+        print(f'Host: {host}')
 
         return await render_template(
-            'chat.html', host=str(host_token), guest=guest_token)
+            'code.html',
+            host_token=host_token,
+            guest_token=guest_token
+        )
 
-    except Exception:
-        return await render_template('index.html')
+    except DuckNoResultFound:
+        print('No result found')
+        return await render_template(
+            'signup.html')
 
 
 # Create a websocket connection
@@ -88,25 +103,28 @@ async def ws():
                     print(f'Connected guest clients: {guest_clients}')
 
             if message.get('type') == 'message':
-                host_token = message.get('host_token')
-                guest_token = message.get('guest_token')
+                host_id = message.get('host_id')
+                guest_id = message.get('guest_id')
 
                 # Save the message to the database
-                message = Message(
-                    host_token=host_token,
-                    guest_token=guest_token,
-                    message=message.get('message')
+                _message = Message(
+                    id=secrets.token_hex(16),
+                    data=message.get('data'),
+                    date=message.get('date'),
+                    guest_id=message.get('guest_id'),
+                    host_id=message.get('host_id'),
+                    sent_from=message.get('sent_from')
                 )
 
-                storage.add_duck(message)
+                storage.add_duck(_message)
 
                 # Send message to both connections
-                print(f'Sending to {host_token} and {guest_token}')
-                if host_token in host_clients:
-                    await host_clients[host_token].send_json(message)
+                print(f'Sending to {host_id} and {guest_id}')
+                if host_id in host_clients:
+                    await host_clients[host_id].send_json(message)
 
-                if guest_token in guest_clients:
-                    await guest_clients[guest_token].send_json(message)
+                if guest_id in guest_clients:
+                    await guest_clients[guest_id].send_json(message)
 
     except asyncio.CancelledError:
         print('Websocket closed')

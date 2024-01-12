@@ -5,15 +5,15 @@
 """
 import json
 
+from typing import Optional
+from typing import Any
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm.exc import FlushError, NoResultFound
+from sqlalchemy.exc import IntegrityError
 from .models import Base
 from .models.user import User
 from .models.message import Message
-from typing import Optional
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import sessionmaker, Session
-from typing import Any
-from sqlalchemy.orm.exc import FlushError, NoResultFound
-from sqlalchemy.exc import IntegrityError
 
 
 # DBStorage class declaration
@@ -61,7 +61,7 @@ class DBStorage:
             return None
 
         except IntegrityError:
-            raise DuckIntegrityError
+            raise DuckIntegrityError from IntegrityError
 
     def query_duckling(
             self, model: str, query: str) -> Any:
@@ -77,9 +77,7 @@ class DBStorage:
         try:
             if model == 'user':
                 result = self._duck().scalars(
-                    select(User).where(
-                        User.username == query
-                        )
+                    select(User).where(User.username == query)
                 ).first()
 
                 if result is None:
@@ -89,18 +87,17 @@ class DBStorage:
 
             if model == 'message':
                 result = self._duck().scalars(
-                    select(Message).where(
-                        Message.id == query
-                        )
-                ).first()
+                    select(Message)
+                ).all()
 
                 if result is None:
                     raise NoResultFound
 
-                return json.dumps(result.to_dict())
+                # Conver the result to a list of dictionaries
+                return [message.to_dict() for message in result]
 
         except NoResultFound:
-            raise DuckNoResultFound
+            raise DuckNoResultFound from NoResultFound
 
         return None
 
