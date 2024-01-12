@@ -2242,6 +2242,7 @@ a {
             <a href="{{ url_for('duck_auth.logout') }}" class="duck-link">Logout me</a>
             {% else %}
             <a href="{{ url_for('duck_auth.login') }}" class="duck-link">Login</a>
+            <a href="{{ url_for('duck_auth.sign_up') }}" class="duck-link">Sign up</a>
             {% endif %}
         </div>
         <div class="w3-circle prof" style="vertical-align: middle;">
@@ -2270,7 +2271,14 @@ a {
         <div class="w3-small w3-row w3-center">
             <div class="w3-col m6 w3-padding">&copy; Duck <span class="year"></span></div>
             <div class="w3-col m6 w3-padding">
-                <i class="bi bi-patch-question-fill"></i> Help
+                <span>
+                    <i class="bi bi-info-circle-fill"></i>&nbsp; Help
+                </span>
+                &nbsp;&nbsp;&nbsp;
+                <!-- About -->
+                <span>
+                    <i class="bi bi-patch-question-fill"></i>&nbsp; About
+                </span>
             </div>
         </div>
     </footer>

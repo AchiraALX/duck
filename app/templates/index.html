@@ -8,8 +8,12 @@
 		<div class="banner-content">
 			<p class="w3-jumbo">Duck</p>
 		</div>
+		{% if current_user.is_authenticated %}
+		{% endif %}
 	</div>
-
+	<div style="color: black;" class="w3-center">
+		<a href="" class="w3-link">Dashboard</a>
+	</div>
 	<div>
 		<h2>Contributors</h2>
 
