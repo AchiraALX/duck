@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+<div style="margin-top: 80px;">
+    <h2>Your embedable code is</h2>
+    <code id="code" contenteditable>
+        
+    </code>
+</div>
+
+<script>
+    const code = document.getElementById('code');
+    code.innerText = `
+    <iframe src="http://${location.host}/dashboard/chat/{{ current_user.auth_id }}" frameborder="0"></iframe>
+    `
+</script>
+
+{% endblock %}

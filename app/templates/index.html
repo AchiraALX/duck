@@ -6,50 +6,85 @@
 <div class="w3-border content">
 	<div class="banner" id="banner">
 		<div class="banner-content">
-			<p class="w3-jumbo">Duck</p>
+			<p class="w3-jumbo">Xchatter</p>
 		</div>
-		{% if current_user.is_authenticated %}
-		{% endif %}
 	</div>
+	{% if current_user.is_authenticated %}
 	<div style="color: black;" class="w3-center">
-		<a href="" class="w3-link">Dashboard</a>
+		<a href=" {{ url_for('messenger.dashboard') }} " class="w3-link w3-padding w3-round" style="background-color: var(--eucalyptus);">Dashboard</a>
 	</div>
-	<div>
-		<h2>Contributors</h2>
+	{% endif %}
+	<div class="w3-border-top w3-margin-top">
+		<h2 class="w3-margin w3-padding w3-center" style="font-weight: 800;">Contributors</h2>
 
 		<div class="w3-row w3-padding">
-			<div class="w3-col m6 w3-center w3-border w3-round">
+			<div class="w3-col m6 w3-center w3-border w3-round w3-padding">
 				<div>
-					<div>Profile photo</div>
-					<div>Alice Kiptui</div>
-					<div>Role</div>
-					<div>Contribution</div>
-					<a href="">
-						<div><i class="bi bi-github"></i> GitHub</div>
+					<div style="padding: 50px; font-size: xx-large; font-weight: 800; background-color: var(--eucalyptus);">
+						AK
+					</div>
+					<div style="transform: translateY(-100%); text-align: justify; font-weight: 800;" class="w3-padding">Alice Kiptui</div>
+					<div style="display: flex; flex-direction: row;">
+						<div class="w3-padding" style="font-weight: 800;">
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Role: </span>
+							</div>
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Contribution: </span>
+							</div>
+						</div>
+						<div class="w3-padding">
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Developer</span>
+							</div>
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Backend / Frontend</span>
+							</div>
+						</div>
+					</div>
+					<a href="" target="_blank">
+						<div style="background-color: #0d1117; color: #c9d1d9;" class="w3-padding w3-round"><i class="bi bi-github"></i> &nbsp; GitHub</div>
 					</a>
-					<a href="">
-						<div><i class="bi bi-linkedin"></i> LinkedIn</div>
+					<a href="" target="_blank">
+						<div style="background-color: #283E4A; color:  #FFFFFF;" class="w3-padding w3-round"><i class="bi bi-linkedin"></i> LinkedIn</div>
 					</a>
-					<a href="">
-						<div><i class="bi bi-twitter"></i> Twitter</div>
+					<a href="" target="_blank">
+						<div style="background-color:  #15202B; color: #ffffff;" class="w3-padding w3-round"><i class="bi bi-twitter"></i> &nbsp; Twitter</div>
 					</a>
 				</div>
 			</div>
-			<div class="w3-col m6 w3-center">
+			<div class="w3-col m6 w3-center w3-padding w3-border w3-round">
 				<div>
-					<div>Profile photo</div>
-					<div>Achira</div>
-					<div>Role</div>
-					<div>Contribution</div>
-
-					<a href="">
-						<div><i class="bi bi-github"></i> GitHub</div>
+					<div style="padding: 50px; font-size: xx-large; font-weight: 800; background-color: var(--eucalyptus);">
+						AJ
+					</div>
+					<div style="transform: translateY(-100%); text-align: justify; font-weight: 800;" class="w3-padding">Achira Jacob</div>
+					<div style="display: flex; flex-direction: row;">
+						<div class="w3-padding" style="font-weight: 800;">
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Role: </span>
+							</div>
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Contribution: </span>
+							</div>
+						</div>
+						<div class="w3-padding">
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Developer</span>
+							</div>
+							<div style="text-align: justify;" class="w3-padding">
+								<span>Backend</span>
+							</div>
+						</div>
+					</div>
+					<a href="https://github.com/AchiraALX" target="_blank">
+						<div style="background-color: #0d1117; color: #c9d1d9;" class="w3-padding w3-round"><i class="bi bi-github"></i> &nbsp; GitHub</div>
 					</a>
-					<a href="">
-						<div><i class="bi bi-linkedin"></i> LinkedIn</div>
+					<a href="https://www.linkedin.com/in/achira-jacob/" target="_blank">
+						<div style="background-color: #283E4A; color:  #FFFFFF;" class="w3-padding w3-round"><i class="bi bi-linkedin"></i> LinkedIn</div>
 					</a>
-					<a href="">
-						<div><i class="bi bi-twitter"></i> Twitter</div>
+					<a href="https://twitter.com/AchitraJacobs" target="_blank">
+						<div style="background-color:  #15202B; color: #ffffff;" class="w3-padding w3-round"><i class="bi bi-twitter"></i> &nbsp; Twitter</div>
 					</a>
 				</div>
 			</div>

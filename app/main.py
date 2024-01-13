@@ -4,8 +4,8 @@
 """The duck main module
 """
 
-from quart import redirect, render_template, Response, jsonify, url_for
 from typing import Literal, Tuple
+from quart import redirect, render_template, Response, jsonify, url_for
 
 from . import duck_app
 

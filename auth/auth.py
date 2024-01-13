@@ -16,7 +16,7 @@ from quart import (
     flash
 )
 from quart_auth import (
-    AuthUser, current_user, login_user, logout_user
+    AuthUser, current_user, login_user, logout_user, login_required
 )
 from workers.workers import Query, AddToDB, DuckIntegrityError
 from workers import DuckNoResultFound
@@ -139,6 +139,15 @@ async def logout():
         return redirect(url_for('main_duck'))
 
     return redirect(url_for('duck_auth.login'))
+
+
+@duck_auth.get('/profile')
+@login_required
+async def profile():
+    """Profile page
+    """
+
+    return await render_template('profile.html')
 
 
 @duck_auth.route('/500', methods=['GET'], strict_slashes=False)
