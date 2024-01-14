@@ -106,25 +106,56 @@ async def ws():
                 host_id = message.get('host_id')
                 guest_id = message.get('guest_id')
 
-                # Save the message to the database
-                _message = Message(
-                    id=secrets.token_hex(16),
-                    data=message.get('data'),
-                    date=message.get('date'),
-                    guest_id=message.get('guest_id'),
-                    host_id=message.get('host_id'),
-                    sent_from=message.get('sent_from')
-                )
+                if message.get('data') is None:
+                    message = "du"
 
-                storage.add_duck(_message)
+                if len(message.get('data')) < 5:
+                    message = {
+                            'type': 'info',
+                            'message': 'Please type a sentence'
+                        }
+                    if message.get('sent_from') == 'host':
+                        await host_clients[host_id].send_json(message)
 
-                # Send message to both connections
-                print(f'Sending to {host_id} and {guest_id}')
-                if host_id in host_clients:
-                    await host_clients[host_id].send_json(message)
+                    else:
+                        await guest_clients[guest_id].send_json(message)
+                else:
 
-                if guest_id in guest_clients:
-                    await guest_clients[guest_id].send_json(message)
+                    # Save the message to the database
+                    _message = Message(
+                        id=secrets.token_hex(16),
+                        data=message.get('data'),
+                        date=message.get('date'),
+                        guest_id=message.get('guest_id'),
+                        host_id=message.get('host_id'),
+                        sent_from=message.get('sent_from')
+                    )
+
+                    storage.add_duck(_message)
+
+                    # Send message to both connections
+                    print(f'Sending to {host_id} and {guest_id}')
+                    if host_id in host_clients:
+                        try:
+                            await host_clients[host_id].send_json(message)
+
+                        except KeyError:
+                            info = {
+                                'type': 'info',
+                                'message': 'Client disconnected'
+                            }
+                            await guest_clients[guest_id].send_json(info)
+
+                    if guest_id in guest_clients:
+                        try:
+                            await guest_clients[guest_id].send_json(message)
+
+                        except KeyError:
+                            info = {
+                                'type': 'info',
+                                'message': 'Client disconnected.'
+                            }
+                            await host_clients[host_id].send_json(info)
 
     except asyncio.CancelledError:
         print('Websocket closed')

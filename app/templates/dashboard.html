@@ -5,7 +5,7 @@
     <div id="chat-list">
        {% if messages %}
        {% for message in messages %}
-         <div class="w3-panel w3-round w3-padding w3-margin-top chat" style="background-color: var(--eucalyptus);">
+         <div class="w3-panel w3-round w3-padding w3-margin-top chat" style="background-color: var(--eucalyptus); width: 80%; margin: 0 auto;" onclick="work()">
               <div class="w3-border-bottom" data-guest="{{ message.guest_id }}">
                 Guest ID: <span id="guest">{{ message.guest_id }}</span>   : :  Sent at: {{ message.datetime }}
               </div>
@@ -43,7 +43,7 @@
             const chatList = document.getElementById('chat-list');
             const chat = document.createElement('div');
             chat.innerHTML = `
-            <div class="w3-panel w3-round w3-padding w3-margin-top chat" style="background-color: var(--eucalyptus);">
+            <div class="w3-panel w3-round w3-padding w3-margin-top chat" style="background-color: var(--eucalyptus); width: 80%; margin: 0 auto;" onclick="work()">
               <div class="w3-border-bottom" data-guest=" ${data.guest_id} ">
                 Guest ID: <span id="guest">${ data.guest_id }</span> : : Sent at: ${ data.date }
               </div>
@@ -51,10 +51,13 @@
                     ${ data.data }
                 </div>
                 
-
             </div>
             `;
             chatList.appendChild(chat);
+        }
+
+        if (data.type == 'info') {
+            alert(data.message);
         }
     })
 
@@ -66,24 +69,25 @@
         sock.send(message);
     }
 
-    const chats = document.querySelectorAll('.chat');
-    chats.forEach((chat) => {
-        chat.addEventListener('click', (event) => {
-            const guestId = chat.querySelector('#guest').innerText;
-            const message = prompt('Type duck here ...')
+    const work = () => {
+        const chats = document.querySelectorAll('.chat');
+        chats.forEach((chat) => {
+            chat.addEventListener('click', (event) => {
+                const guestId = chat.querySelector('#guest').innerText;
+                const message = prompt('Type duck here ...')
 
-            sendMessage(JSON.stringify({
-                    type: 'message',
-                    data: message,
-                    date: new Date().toISOString(),
-                    guest_id: guestId,
-                    host_id: '{{ current_user.auth_id }}',
-                    sent_from: 'host'
-                }))
-
+                sendMessage(JSON.stringify({
+                        type: 'message',
+                        data: message,
+                        date: new Date().toISOString(),
+                        guest_id: guestId,
+                        host_id: '{{ current_user.auth_id }}',
+                        sent_from: 'host'
+                    }));
+            })
         })
-    })
-    
+    }
+    work();
 </script>
 
 {% endblock %}
