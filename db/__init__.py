@@ -22,7 +22,7 @@ class DBStorage:
     the database
     """
 
-    def __init__(self, drop: Optional = False) -> None:
+    def __init__(self, drop: Optional = True) -> None:
         """Initialize the class
         """
 
